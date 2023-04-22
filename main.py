@@ -8,8 +8,11 @@ def handler(event, context):
         food = event['state']['session']['start_food']
         extremely_little_food = event['state']['session']['food_state']
         dog = event['state']['session']['dog']
+        injury = event['state']['session']['injury']
+        energy = event['state']['session']['energy']
+        money = event['state']['session']['money']
 
-        output = main(user_input, got_new_sword, food, dog, extremely_little_food)
+        output = main(user_input, got_new_sword, food, dog, extremely_little_food, injury, energy, money)
         text = output[0]
         new_button_text_1 = output[1]
         new_button_text_2 = output[2]
@@ -20,6 +23,9 @@ def handler(event, context):
         food = output[6]
         extremely_little_food = output[7]
         dog = output[8]
+        injury = output[9]
+        energy = output[10]
+        money = output[11]
 
         return {
             'version': event['version'],
@@ -48,7 +54,10 @@ def handler(event, context):
                 "sword": got_new_sword,
                 "start_food": food,
                 "food_state": extremely_little_food,
-                "dog": dog
+                "dog": dog,
+                "injury": injury,
+                "energy": energy,
+                "money": money,
             },
         }
     else:
@@ -74,12 +83,15 @@ def handler(event, context):
                 "sword": False,
                 "start_food": False,
                 "food_state": False,
-                "dog": False
+                "dog": False,
+                "injury": False,
+                "energy": False,
+                "money": False,
             },
         }
 
 
-def main(user_input, got_new_sword, food, dog, extremely_little_food):
+def main(user_input, got_new_sword, food, dog, extremely_little_food, injury, energy, money):
     text, new_button_text_1, new_button_text_2, new_button_text_3, end = '', '', '', 'Мне надо идти, пока!', 'false'
     # ------------------------- #
     if user_input == 'Да!':
@@ -189,12 +201,14 @@ def main(user_input, got_new_sword, food, dog, extremely_little_food):
         text = ' Я чувствую прилив сил и готов им всем показать как сражается настоящий самурай!!!! ' \
                ' Я получаю лёгкое ранение в ногу, ничего страшного, жить буду. Все бандиты были поражены ' \
                ' и я хромая продолжил свой путь. Стоит ли мне сделать перевал для перевязки раны или и так пойдёт?'
+        injury = True
         new_button_text_1 = 'И так пойдёт!'
         new_button_text_2 = 'Лучше сделать перевал!'
     if user_input == 'Не напрягайся, они слабые соперники.':
         text = ' Забавно, враги испугались моей уверенности и почти сразу убежали роняя свои вещи по пути. Я подобрал' \
                ' кошелёк полный денег и счастливый продолжил свой путь. Уже ночь и я сильно устал, стоит ли делать ' \
                ' перевал или поспешим в поселение?'
+        money = True
         new_button_text_1 = 'Сделаем перевал!'
         new_button_text_2 = 'Нет, мы спешим!'
     # ------------------------- #
@@ -222,12 +236,32 @@ def main(user_input, got_new_sword, food, dog, extremely_little_food):
     if user_input == 'Да, остановка сейчас не будет лишней!':
         if food is True:
             text = ' Разместив маленький костёр, я смог погреться и поесть еды. Хорошо что у меня её много, я смог ' \
-                   ' поесть вдовль! Ну чтож, отдохнули и хватит, двигаем дальше! По пути я '
+                   ' поесть вдовль! Ну что, отдохнули и хватит, двигаем дальше! Иду, иду, иду... И вот сейчас я вижу ' \
+                   ' какой-то спуск с горы, казалось что раньше его не было.. Пойдём по этому спуску или продолжим ' \
+                   ' путь по обычному пути?'
+        elif extremely_little_food is True:
+            text = ' Разместив маленький костёр, я обнаружил что у меня уже почти нет еды и это крайне меня тревожит ' \
+                   ' ... В горах я вряд ли смогу найти еду..... Ладно, хоть немного, но отдохнул. Выдвигаемся! ' \
+                   ' Меня ждёт тяжёлый путь, надеюсь я дойду... Сейчас я вижу какой-то спуск с горы, казалось что ' \
+                   ' раньше его не было.. Может я там найду еду?  Пойдём по этому спуску или продолжим путь по ' \
+                   ' обычному пути?'
+        else:
+            text = ' Разместив маленький костёр, я обнаружил что у меня не так и много еды, надо бы её беречь, ' \
+                   ' но тем не менее, я смог поесть и восстановить силы! Пора выдвигаться, по пути я вижу своё ' \
+                   ' поселение, оно кажется таким крошечным... Меня ждёт тяжёлый путь, надеюсь я дойду...' \
+                   ' Сейчас я вижу какой-то спуск с горы, казалось что раньше его не было.. Пойдём по этому ' \
+                   ' спуску или продолжим путь по обычному пути?'
+        energy = True
     if user_input == 'Нет, пройдём и так!':
-        pass
+        text = 'Я решил пропустить это прекрасное место для остановки. Мне надо торопиться, дама моего Господина ' \
+               ' скорее всего сейчас находится в опасности! Я должен добраться до поселения как можно скорее....' \
+               ' Невзирая на лёгкую усталость я собрался с силами и продолжил свой путь.. И вот сейчас я вижу ' \
+               ' какой-то спуск с горы, казалось что раньше его не было.. Пойдём по этому спуску или продолжим ' \
+               ' путь по обычному пути?'
     # ------------------------- #
     if user_input == 'И так пойдёт!':
-        pass
+        text = 'Хромая я продолжил свой путь.... Больно в моей ноге давала о себе знать, думаю это серьёзно ' \
+               ' меня замедлит на пути к поселению'
     if user_input == 'Лучше сделать перевал!':
         pass
     # ------------------------- #
@@ -246,4 +280,4 @@ def main(user_input, got_new_sword, food, dog, extremely_little_food):
         end = 'true'
 
     return [text, new_button_text_1, new_button_text_2, new_button_text_3, end, got_new_sword, food, dog,
-            extremely_little_food]
+            extremely_little_food, injury, energy, money]

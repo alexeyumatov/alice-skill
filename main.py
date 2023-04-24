@@ -13,59 +13,108 @@ def handler(event, context):
         money = event['state']['session']['money']
         warriors = event['state']['session']['warriors']
 
-        output = main(user_input, got_new_sword, food, dog,
-                      extremely_little_food, injury, energy,
-                      money, warriors)
+        cor_answer_1 = event['state']['session']['cor_answer1']
+        cor_answer_2 = event['state']['session']['cor_answer2']
+        cor_answer_3 = 'Мне надо идти, пока!'
+        new_button_text_1 = cor_answer_1
+        new_button_text_2 = cor_answer_2
+        new_button_text_3 = cor_answer_3
+        if user_input == cor_answer_1 or user_input == cor_answer_2 or user_input == cor_answer_3:
+            output = main(user_input, got_new_sword, food, dog,
+                          extremely_little_food, injury, energy,
+                          money, warriors)
 
-        text = output[0]
-        new_button_text_1 = output[1]
-        new_button_text_2 = output[2]
-        new_button_text_3 = output[3]
-        end = output[4]
+            text = output[0]
+            new_button_text_1 = output[1]
+            new_button_text_2 = output[2]
+            new_button_text_3 = output[3]
+            end = output[4]
 
-        got_new_sword = output[5]
-        food = output[6]
-        extremely_little_food = output[7]
-        dog = output[8]
-        injury = output[9]
-        energy = output[10]
-        money = output[11]
-        warriors = output[12]
+            got_new_sword = output[5]
+            food = output[6]
+            extremely_little_food = output[7]
+            dog = output[8]
+            injury = output[9]
+            energy = output[10]
+            money = output[11]
+            warriors = output[12]
+            cor_answer_1 = new_button_text_1
+            cor_answer_2 = new_button_text_2
+            return {
+                'version': event['version'],
+                'session': event['session'],
+                'response': {
+                    'text': text,
+                    'tts': text,
+                    "buttons": [
+                        {
+                            "title": new_button_text_1,
+                            "hide": True
+                        },
+                        {
+                            "title": new_button_text_2,
+                            "hide": True
+                        },
+                        {
+                            "title": new_button_text_3,
+                            "hide": True
+                        },
 
-        return {
-            'version': event['version'],
-            'session': event['session'],
-            'response': {
-                'text': text,
-                'tts': text,
-                "buttons": [
-                    {
-                        "title": new_button_text_1,
-                        "hide": True
-                    },
-                    {
-                        "title": new_button_text_2,
-                        "hide": True
-                    },
-                    {
-                        "title": new_button_text_3,
-                        "hide": True
-                    },
+                    ],
+                    'end_session': end,
+                },
+                'session_state': {
+                    "sword": got_new_sword,
+                    "start_food": food,
+                    "food_state": extremely_little_food,
+                    "dog": dog,
+                    "injury": injury,
+                    "energy": energy,
+                    "money": money,
+                    'warriors': warriors,
+                    'cor_answer1': cor_answer_1,
+                    'cor_answer2': cor_answer_2,
+                },
+            }
+        else:
+            text = 'Такого выбора нет!'
+            return {
+                'version': event['version'],
+                'session': event['session'],
+                'response': {
+                    'text': text,
+                    'tts': text,
+                    "buttons": [
+                        {
+                            "title": new_button_text_1,
+                            "hide": True
+                        },
+                        {
+                            "title": new_button_text_2,
+                            "hide": True
+                        },
+                        {
+                            "title": new_button_text_3,
+                            "hide": True
+                        },
 
-                ],
-                'end_session': end,
-            },
-            'session_state': {
-                "sword": got_new_sword,
-                "start_food": food,
-                "food_state": extremely_little_food,
-                "dog": dog,
-                "injury": injury,
-                "energy": energy,
-                "money": money,
-                'warriors': warriors,
-            },
-        }
+                    ],
+                    'end_session': False,
+                },
+                'session_state': {
+                    "sword": got_new_sword,
+                    "start_food": food,
+                    "food_state": extremely_little_food,
+                    "dog": dog,
+                    "injury": injury,
+                    "energy": energy,
+                    "money": money,
+                    'warriors': warriors,
+                    'cor_answer1': cor_answer_1,
+                    'cor_answer2': cor_answer_2,
+                },
+            }
+
     else:
         return {
             'version': event['version'],
@@ -94,6 +143,8 @@ def handler(event, context):
                 "energy": False,
                 "money": False,
                 'warriors': False,
+                'cor_answer1': "Да!",
+                'cor_answer2': "Нет!",
             },
         }
 
@@ -158,7 +209,7 @@ def main(user_input, got_new_sword, food, dog, extremely_little_food, injury, en
                ' Как раз я вижу рядом повозку где торгуют вяленным мясом.' \
                ' - Привет, по чём продаешь? - спрашиваю я' \
                ' - Ох, ты же Такэо, верно? Господин всё оплачивает, бери сколько нужно - отвечает торговец.' \
-               ' А вот такой поворот событый мне нравится, подумал я про себя и набрал провизии на всю дорогу.' \
+               ' Я обрадовался и набрал провизии на всю дорогу.' \
                ' Чтож, дальше думаю пойду домой, собирать вещи в путь или можно пойти подготовить к бою оружие..'
         food = True
         new_button_text_1 = 'Пойти домой'
@@ -456,7 +507,12 @@ def main(user_input, got_new_sword, food, dog, extremely_little_food, injury, en
                ' дома, я вспомнил о местонахождении тайного туннеля в горы.. Он находился в маленькой пристройке к ' \
                ' основному дому. Зайдя туда, мы почувствовали облегчение, ведь самое страшное позади. Дальше, идя ' \
                ' по сырому и тёмному туннелю, мы почувствовали дикий холод. Мы были в горах. Выйдя из туннеля мы ' \
-               ' решили сразу побежать к моему поселению... После долгой пробежки мы оказались в безопасности. ' \
+               ' решили сразу побежать к моему поселению... Прости, прерву его монолог. Ты слушаешь? Сейчас будет' \
+               ' концовка! '
+        new_button_text_1 = 'Да, я слушаю'
+        new_button_text_2 = 'Давай не томи, что же было дальше?'
+    if user_input == 'Да, я слушаю' or user_input == 'Давай не томи, что же было дальше?':
+        text = 'После долгой пробежки мы оказались в безопасности. ' \
                ' Я сразу же написал письмо Господину о том, что его семья сейчас в безопасности и находится под моей ' \
                ' защитой. Зайдя в поселение, нас встретило тёплое солнце и холодный ветер. На горизонте горел город. ' \
                ' Союзные войска позже отбили его, а беженцы от туда заполонили на какое то время наши улицы. ' \

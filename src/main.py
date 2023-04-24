@@ -1,9 +1,13 @@
 def handler(event, context):
+    # Приветственный текст
     text = 'Привет! Хочешь я расскажу тебе историю про самурая?'
+
+    # Если пользователь написал что то, то:
     if 'request' in event and 'original_utterance' in event['request'] and \
             len(event['request']['original_utterance']) > 0:
         user_input = event['request']['original_utterance']
 
+        # Получаем инвентарь из состояния сессии
         got_new_sword = event['state']['session']['sword']
         food = event['state']['session']['start_food']
         extremely_little_food = event['state']['session']['food_state']
@@ -13,23 +17,30 @@ def handler(event, context):
         money = event['state']['session']['money']
         warriors = event['state']['session']['warriors']
 
+        # Получаем верные ответы из состояния сессии
         cor_answer_1 = event['state']['session']['cor_answer1']
         cor_answer_2 = event['state']['session']['cor_answer2']
         cor_answer_3 = 'Мне надо идти, пока!'
         new_button_text_1 = cor_answer_1
         new_button_text_2 = cor_answer_2
         new_button_text_3 = cor_answer_3
+
+        # Проверяем правильно ли ответил пользователь
         if user_input == cor_answer_1 or user_input == cor_answer_2 or user_input == cor_answer_3:
+
+            # Судя по ответу пользователья смотрим что надо ответить
             output = main(user_input, got_new_sword, food, dog,
                           extremely_little_food, injury, energy,
                           money, warriors)
 
+            # Получаем что надо отвечать и что ожидаем услышать при следующем ответе
             text = output[0]
             new_button_text_1 = output[1]
             new_button_text_2 = output[2]
             new_button_text_3 = output[3]
             end = output[4]
 
+            # Получаем как изменялся инвентарь
             got_new_sword = output[5]
             food = output[6]
             extremely_little_food = output[7]
@@ -40,6 +51,8 @@ def handler(event, context):
             warriors = output[12]
             cor_answer_1 = new_button_text_1
             cor_answer_2 = new_button_text_2
+
+            # Подставляем полученные значения (потом это получает Yandex Cloud и отправляет в Yandex Диалоги)
             return {
                 'version': event['version'],
                 'session': event['session'],
@@ -76,6 +89,7 @@ def handler(event, context):
                     'cor_answer2': cor_answer_2,
                 },
             }
+        # Это получит Yandex Cloud если пользователь ввёл что то не то
         else:
             text = 'Такого выбора нет!'
             return {
@@ -114,7 +128,7 @@ def handler(event, context):
                     'cor_answer2': cor_answer_2,
                 },
             }
-
+    # Это получит Yandex Cloud в самом первом запуске
     else:
         return {
             'version': event['version'],
@@ -149,6 +163,8 @@ def handler(event, context):
         }
 
 
+# Основаная функция по которой подбирается ответ и изменяется инвентарь, там всё однотипно написанно, особо
+# Объяснять не вижу смысла
 def main(user_input, got_new_sword, food, dog, extremely_little_food, injury, energy, money, warriors):
     text, new_button_text_1, new_button_text_2, new_button_text_3, end = '', '', '', 'Мне надо идти, пока!', 'false'
     # ------------------------- #
